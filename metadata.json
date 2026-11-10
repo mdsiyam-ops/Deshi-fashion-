@@ -1,0 +1,6 @@
+{
+  "name": "BD Mart Storefront and Dashboard",
+  "description": "An elegant, modern storefront and administration panel for BD Mart, featuring interactive catalog browsing, size/color selectors, a bottom-sheet checkout, real-time analytics, inventory editing, and order lifecycle management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

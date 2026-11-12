@@ -531,7 +531,7 @@ export default function StorefrontHome({
                     {/* Cover image frame */}
                     <div className="aspect-[3/4] overflow-hidden bg-neutral-100 relative border-b border-neutral-100">
                       <img
-                        src={p.image || null}
+                        src={p.image || ''}
                         alt={p.name}
                         className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500"
                         referrerPolicy="no-referrer"

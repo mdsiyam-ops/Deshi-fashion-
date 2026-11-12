@@ -23,25 +23,57 @@ import LoginRegister from './components/LoginRegister';
 
 
 export default function App() {
-  // Global States backed by LocalStorage for durable local persistence
+  // Global States backed by LocalStorage with bulletproof fallback error handling
   const [products, setProducts] = useState<Product[]>(() => {
-    const saved = localStorage.getItem('bd_mart_products');
-    return saved ? JSON.parse(saved) : INITIAL_PRODUCTS;
+    try {
+      const saved = localStorage.getItem('bd_mart_products');
+      if (saved && saved !== 'undefined' && saved !== 'null') {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {
+      console.warn('Failed to parse cached products', e);
+    }
+    return INITIAL_PRODUCTS;
   });
 
   const [orders, setOrders] = useState<Order[]>(() => {
-    const saved = localStorage.getItem('bd_mart_orders');
-    return saved ? JSON.parse(saved) : INITIAL_ORDERS;
+    try {
+      const saved = localStorage.getItem('bd_mart_orders');
+      if (saved && saved !== 'undefined' && saved !== 'null') {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch (e) {
+      console.warn('Failed to parse cached orders', e);
+    }
+    return INITIAL_ORDERS;
   });
 
   const [wishlist, setWishlist] = useState<string[]>(() => {
-    const saved = localStorage.getItem('bd_mart_wishlist');
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const saved = localStorage.getItem('bd_mart_wishlist');
+      if (saved && saved !== 'undefined' && saved !== 'null') {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch (e) {
+      console.warn('Failed to parse cached wishlist', e);
+    }
+    return [];
   });
 
   const [auth, setAuth] = useState<AuthState>(() => {
-    const saved = localStorage.getItem('bd_mart_auth');
-    return saved ? JSON.parse(saved) : {
+    try {
+      const saved = localStorage.getItem('bd_mart_auth');
+      if (saved && saved !== 'undefined' && saved !== 'null') {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') return parsed;
+      }
+    } catch (e) {
+      console.warn('Failed to parse cached auth', e);
+    }
+    return {
       isAuthenticated: false,
       email: '',
       name: '',
@@ -50,13 +82,21 @@ export default function App() {
   });
 
   const [currentView, setCurrentView] = useState<AppView>(() => {
-    const saved = localStorage.getItem('bd_mart_last_view');
-    return (saved as AppView) || 'storefront';
+    try {
+      const saved = localStorage.getItem('bd_mart_last_view');
+      const validViews: AppView[] = ['storefront', 'admin-dashboard', 'admin-inventory', 'admin-orders', 'login'];
+      if (saved && validViews.includes(saved as AppView)) {
+        return saved as AppView;
+      }
+    } catch (e) {
+      console.warn('Failed to parse last view', e);
+    }
+    return 'storefront';
   });
 
   // Keep track of which product is currently being displayed in the customer storefront detail page
   const [activeProductId, setActiveProductId] = useState<string>(() => {
-    return products[0]?.id || '';
+    return products[0]?.id || INITIAL_PRODUCTS[0]?.id || '';
   });
 
   // Storefront tab view ('home' | 'detail') to show either homepage or product detail
@@ -162,8 +202,8 @@ export default function App() {
     localStorage.setItem('bd_mart_last_view', currentView);
   }, [currentView]);
 
-  // Find active product from id
-  const activeProduct = products.find(p => p.id === activeProductId) || products[0];
+  // Find active product from id with safe fallback
+  const activeProduct = products.find(p => p.id === activeProductId) || products[0] || INITIAL_PRODUCTS[0];
 
   // Storefront Product Detail Switcher Handler
   const handleSelectProduct = (product: Product) => {

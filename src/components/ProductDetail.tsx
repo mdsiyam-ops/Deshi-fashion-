@@ -143,7 +143,7 @@ export default function ProductDetail({
           <div className="aspect-[4/5] w-full overflow-hidden rounded-lg bg-neutral-100 relative border border-neutral-150/50">
             <img
               id="main-product-image"
-              src={activeImage || null}
+              src={activeImage || ''}
               alt={activeProduct.name}
               className="w-full h-full object-cover transition-all duration-300"
               referrerPolicy="no-referrer"
@@ -184,7 +184,7 @@ export default function ProductDetail({
                     activeImage === img ? 'border-brand-indigo ring-1 ring-brand-indigo/30' : 'border-neutral-200 hover:border-neutral-400'
                   }`}
                 >
-                  <img src={img || null} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                  <img src={img || ''} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                 </button>
               ))}
             </div>
@@ -373,7 +373,7 @@ export default function ProductDetail({
               >
                 <div className="aspect-[3/4] rounded-lg overflow-hidden bg-neutral-50 relative border border-neutral-150/40">
                   <img
-                    src={p.image || null}
+                    src={p.image || ''}
                     alt={p.name}
                     className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500"
                     referrerPolicy="no-referrer"
@@ -490,7 +490,7 @@ export default function ProductDetail({
                       </h4>
                       <div className="flex gap-4">
                         <div className="w-16 aspect-[3/4] rounded-md overflow-hidden bg-white border border-neutral-200 flex-shrink-0">
-                          <img src={activeImage || null} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                          <img src={activeImage || ''} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                         </div>
                         <div className="min-w-0 flex-1">
                           <h5 className="text-sm font-semibold text-brand-indigo truncate">{activeProduct.name}</h5>

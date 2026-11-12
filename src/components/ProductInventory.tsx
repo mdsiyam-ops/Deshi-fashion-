@@ -315,7 +315,7 @@ export default function ProductInventory({
                     {/* Item Detail */}
                     <td className="py-4 px-4 flex items-center gap-3">
                       <div className="w-10 aspect-[3/4] rounded-md overflow-hidden bg-neutral-100 border border-neutral-200 flex-shrink-0">
-                        <img src={p.image || null} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                        <img src={p.image || ''} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                       </div>
                       <div className="min-w-0">
                         <h4 className="font-semibold text-brand-indigo truncate max-w-xs sm:max-w-md">{p.name}</h4>

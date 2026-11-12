@@ -59,6 +59,8 @@ export default function CustomerPortal({
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [showBalancePopup, setShowBalancePopup] = useState<boolean>(false);
+  const [copiedPostId, setCopiedPostId] = useState<string | null>(null);
+  const [trackingNotice, setTrackingNotice] = useState<string | null>(null);
 
   // Profile data (as requested by the Urgent Notice)
   const [shopName, setShopName] = useState<string>(() => {
@@ -818,7 +820,7 @@ export default function CustomerPortal({
                 {products.slice(0, 3).map((p) => (
                   <div key={p.id} className="border border-neutral-200 rounded-lg p-4 space-y-3 bg-neutral-50">
                     <div className="flex gap-3 items-center">
-                      <img src={p.image || null} alt="" className="w-10 h-12 object-cover rounded border border-neutral-200 flex-shrink-0" referrerPolicy="no-referrer" />
+                      <img src={p.image || ''} alt="" className="w-10 h-12 object-cover rounded border border-neutral-200 flex-shrink-0" referrerPolicy="no-referrer" />
                       <div>
                         <h4 className="text-xs font-bold text-brand-indigo">{p.name}</h4>
                         <span className="text-[10px] bg-indigo-50 text-indigo-700 border border-indigo-100 px-1.5 py-0.5 rounded font-bold">{p.category}</span>
@@ -840,17 +842,25 @@ export default function CustomerPortal({
 অর্ডার করতে আজই আমাদের ইনবক্সে মেসেজ করুন অথবা কল করুন আপনার ঠিকানাসহ।`}
                     </div>
 
-                    <div className="flex justify-end">
-                      <button
-                        onClick={() => {
-                          navigator.clipboard.writeText(`🍁 প্রিমিয়াম কালেকশন: ${p.name} 🍁\n\n✅ ১০০% পিওর সুতা এবং মসৃণ ফিনিশিং...\n🚚 সারাদেশে ক্যাশ অন ডেলিভারি...`);
-                          alert('পোস্টের টেক্সট কপি করা হয়েছে!');
-                        }}
-                        className="px-3.5 py-1.5 bg-brand-indigo hover:bg-neutral-900 text-white font-bold text-[10px] rounded transition-all"
-                      >
-                        কপি করুন
-                      </button>
-                    </div>
+                      <div className="flex justify-end items-center gap-2">
+                        {copiedPostId === p.id && (
+                          <span className="text-[10px] font-bold text-emerald-600">✓ টেক্সট কপি হয়েছে!</span>
+                        )}
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(`🍁 প্রিমিয়াম কালেকশন: ${p.name} 🍁\n\n✅ ১০০% পিওর সুতা এবং মসৃণ ফিনিশিং...\n🚚 সারাদেশে ক্যাশ অন ডেলিভারি...`);
+                            setCopiedPostId(p.id);
+                            setTimeout(() => setCopiedPostId(null), 2500);
+                          }}
+                          className={`px-3.5 py-1.5 font-bold text-[10px] rounded transition-all ${
+                            copiedPostId === p.id 
+                              ? 'bg-emerald-600 text-white' 
+                              : 'bg-brand-indigo hover:bg-neutral-900 text-white'
+                          }`}
+                        >
+                          {copiedPostId === p.id ? 'কপি সম্পন্ন!' : 'কপি করুন'}
+                        </button>
+                      </div>
                   </div>
                 ))}
               </div>
@@ -917,7 +927,7 @@ export default function CustomerPortal({
                         {/* Cover Image Frame */}
                         <div className="aspect-[3/4] overflow-hidden bg-neutral-100 relative border-b border-neutral-100">
                           <img
-                            src={p.image || null}
+                            src={p.image || ''}
                             alt={p.name}
                             className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500"
                             referrerPolicy="no-referrer"
@@ -1041,7 +1051,7 @@ export default function CustomerPortal({
                     .map((p) => (
                       <div key={p.id} className="bg-white border border-neutral-200 rounded-lg overflow-hidden shadow-xs flex flex-col justify-between">
                         <div className="aspect-[3/4] overflow-hidden bg-neutral-100 relative">
-                          <img src={p.image || null} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                          <img src={p.image || ''} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                           <button
                             onClick={() => onToggleWishlist(p.id)}
                             className="absolute top-2.5 right-2.5 bg-white p-1.5 rounded-full text-rose-500"
@@ -1074,7 +1084,7 @@ export default function CustomerPortal({
                   .map((p) => (
                     <div key={p.id} className="bg-white border border-neutral-200 rounded-lg overflow-hidden shadow-xs opacity-85">
                       <div className="aspect-[3/4] overflow-hidden bg-neutral-100 relative">
-                        <img src={p.image || null} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                        <img src={p.image || ''} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                         <span className="absolute top-2.5 left-2.5 bg-rose-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-sm">
                           {p.stockCount === 0 ? 'STOCK OUT' : `${p.stockCount} ITEMS LEFT`}
                         </span>
@@ -1182,12 +1192,20 @@ export default function CustomerPortal({
                           </span>
                         </div>
                         <button
-                          onClick={() => alert(`অর্ডার ${o.id} বর্তমানে লজিস্টিক সেন্টারে ট্র্যাকিং হচ্ছে।`)}
+                          onClick={() => {
+                            setTrackingNotice(`অর্ডার #${o.id} বর্তমানে লজিস্টিক সেন্টারে ট্র্যাকিং হচ্ছে। কুরিয়ার স্ট্যাটাস: ${o.courierStatus || o.status}`);
+                            setTimeout(() => setTrackingNotice(null), 4000);
+                          }}
                           className="px-3 py-1.5 bg-white border border-neutral-250 rounded text-[10px] font-bold text-neutral-700 hover:bg-neutral-50 transition-all"
                         >
                           লাইভ ট্র্যাক
                         </button>
                       </div>
+                      {trackingNotice && trackingNotice.includes(o.id) && (
+                        <div className="mt-2 p-2 bg-indigo-50 border border-indigo-100 rounded text-[11px] font-medium text-indigo-800">
+                          ℹ️ {trackingNotice}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>

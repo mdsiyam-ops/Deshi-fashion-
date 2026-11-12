@@ -288,7 +288,7 @@ export default function OrderManagement({ orders, onUpdateOrderStatus, onUpdateO
                         <div key={i} className="flex gap-3 items-center justify-between">
                           <div className="flex gap-3 items-center min-w-0">
                             <div className="w-9 aspect-[3/4] rounded-md overflow-hidden bg-neutral-100 border border-neutral-150 flex-shrink-0">
-                              <img src={item.product.image || null} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                              <img src={item.product?.image || ''} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                             </div>
                             <div className="min-w-0">
                               <h5 className="text-xs font-semibold text-brand-indigo truncate">{item.product.name}</h5>
